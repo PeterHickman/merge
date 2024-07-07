@@ -1,5 +1,9 @@
 package main
 
+// TODO: Check file differences on more that file size. md5? sha256?
+// TODO: A dry run flag
+// TODO: Remove files from the updates directory
+
 import (
 	"flag"
 	"fmt"
@@ -8,10 +12,12 @@ import (
 	"github.com/PeterHickman/toolbox"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var master string
 var updates string
+var check string
 
 func usage() {
 	fmt.Println("merge -master <master directory> -updates <updates directory>")
@@ -20,7 +26,7 @@ func usage() {
 	fmt.Println("all files that are missing or have changed. Will also create missing")
 	fmt.Println("directories")
 	fmt.Println("")
-	fmt.Println("A changed file is determined by size")
+	fmt.Println("By default a changed file is determined by size, --check can be either md5 or sha256")
 	fmt.Println("")
 	fmt.Println("Remember to keep a backup :)")
 
@@ -66,10 +72,17 @@ func show(info os.FileInfo) string {
 func init() {
 	var m = flag.String("master", "", "The directory we are keeping up to date")
 	var u = flag.String("updates", "", "The directory of updates")
+	var c = flag.String("check", "size", "How to compare files")
 
 	flag.Parse()
 
 	if *m == "" || *u == "" {
+		usage()
+	}
+
+	check := strings.ToLower(*c)
+
+	if check != "size" && check != "md5" && check != "sha256" {
 		usage()
 	}
 
@@ -94,6 +107,7 @@ func init() {
 func main() {
 	fmt.Println("Master ...: " + master)
 	fmt.Println("Updates ..: " + updates)
+	fmt.Println("Check ....: " + check)
 
 	err := filepath.Walk(updates,
 		func(path string, info os.FileInfo, err error) error {
