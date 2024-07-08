@@ -59,7 +59,7 @@ func usage() {
 	fmt.Println("                     but hash collisions are a thing")
 	fmt.Println("  --check sha256  -- Compare the files by sha256 hash, files with")
 	fmt.Println("                     the same sha256 hashes are considered identical")
-	fmt.Println("  --check always  -- If the files exist they are considerd identical")
+	fmt.Println("  --check same    -- If the files exist they are considerd identical")
 	fmt.Println("                     this allows you to only merge the new files")
 	fmt.Println("")
 	fmt.Println("Remember to keep a backup :)")
@@ -72,7 +72,7 @@ func same_type(m_info, u_info os.FileInfo) bool {
 }
 
 func different_files(master, updates string, m_info, u_info os.FileInfo) bool {
-	if check == "always" {
+	if check == "same" {
 		return false
 	}
 
@@ -130,7 +130,7 @@ func init() {
 
 	check = strings.ToLower(*c)
 
-	if check != "size" && check != "md5" && check != "sha256" && check != "always" {
+	if check != "size" && check != "md5" && check != "sha256" && check != "same" {
 		usage()
 	}
 
