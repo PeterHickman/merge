@@ -156,7 +156,7 @@ describe 'Copy a file' do
     end
   end
 
-  context 'a deeply nexted new file' do
+  context 'a deeply nested new file' do
     before do
       make_dirs('tmp/m', 'tmp/u')
       make_file('tmp/u/a/b/c/d/e/1.txt', '1')
