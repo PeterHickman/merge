@@ -170,6 +170,19 @@ describe 'Copy a file' do
     end
   end
 
+  context 'a new (empty) directory' do
+    before do
+      make_dirs('tmp/m', 'tmp/u', 'tmp/u/x')
+    end
+
+    it 'creates the directory' do
+      s = exec('merge --master tmp/m --updates tmp/u --check size')
+      expect(s).to eq(0), "merge should run without error, got #{s}"
+
+      check_dir('tmp/m/x')
+    end
+  end
+
   context 'dry run is true' do
     context '--check md5 is used for all tests' do
       before do
@@ -205,19 +218,6 @@ describe 'Copy a file' do
 
         check_not_dir('tmp/m/x')
       end
-    end
-  end
-
-  context 'a new (empty) directory' do
-    before do
-      make_dirs('tmp/m', 'tmp/u', 'tmp/u/x')
-    end
-
-    it 'creates the directory' do
-      s = exec('merge --master tmp/m --updates tmp/u --check size')
-      expect(s).to eq(0), "merge should run without error, got #{s}"
-
-      check_dir('tmp/m/x')
     end
   end
 end
