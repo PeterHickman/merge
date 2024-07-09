@@ -1,10 +1,15 @@
+require 'fileutils'
+
 def make_dirs(*dirs)
   dirs.each do |dir|
-    Dir.mkdir(dir)
+    FileUtils.mkdir_p(dir)
   end
 end
 
 def make_file(path, content)
+  d = File.dirname(path)
+  FileUtils.mkdir_p(d) unless File.exist?(d)
+
   f = File.open(path, 'w')
   f.puts content
   f.close
