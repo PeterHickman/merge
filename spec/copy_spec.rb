@@ -193,5 +193,31 @@ describe 'Copy a file' do
         check_file('tmp/m/1.txt', '2')
       end
     end
+
+    context 'a new (empty) directory' do
+      before do
+        make_dirs('tmp/m', 'tmp/u', 'tmp/u/x')
+      end
+
+      it 'does not create the directory' do
+        s = exec('merge --master tmp/m --updates tmp/u --dry-run')
+        expect(s).to eq(0), "merge should run without error, got #{s}"
+
+        check_not_dir('tmp/m/x')
+      end
+    end
+  end
+
+  context 'a new (empty) directory' do
+    before do
+      make_dirs('tmp/m', 'tmp/u', 'tmp/u/x')
+    end
+
+    it 'creates the directory' do
+      s = exec('merge --master tmp/m --updates tmp/u --check size')
+      expect(s).to eq(0), "merge should run without error, got #{s}"
+
+      check_dir('tmp/m/x')
+    end
   end
 end

@@ -29,6 +29,14 @@ def check_file(path, content)
   end
 end
 
+def check_dir(path)
+  expect(File.exist?(path)).to eq(true), "The directory #{path} should exist"
+end
+
+def check_not_dir(path)
+  expect(File.exist?(path)).to eq(false), "The directory #{path} should not exist"
+end
+
 def check_not_file(path)
   expect(File.exist?(path)).to eq(false), "The file #{path} should not exist"
 end
