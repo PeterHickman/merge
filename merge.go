@@ -45,7 +45,7 @@ func sha256_of_file(filename string) string {
 }
 
 func usage() {
-	fmt.Println("merge -master <master directory> -updates <updates directory>")
+	fmt.Println("merge --master <master directory> --updates <updates directory> [--check ???] [--dry-run]")
 	fmt.Println("")
 	fmt.Println("Copies all the files in <updates directory> into <master directory> for")
 	fmt.Println("all files that are missing or have changed. Will also create missing")
@@ -61,6 +61,9 @@ func usage() {
 	fmt.Println("                     the same sha256 hashes are considered identical")
 	fmt.Println("  --check same    -- If the files exist they are considerd identical")
 	fmt.Println("                     this allows you to only merge the new files")
+	fmt.Println("")
+	fmt.Println("  --dry-run       -- Report the actions that would be taken but do not")
+	fmt.Println("                     do them")
 	fmt.Println("")
 	fmt.Println("Remember to keep a backup :)")
 
