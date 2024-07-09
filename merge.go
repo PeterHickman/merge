@@ -209,11 +209,7 @@ func main() {
 					fmt.Println(ac.Red(m + " is a " + show(m_info) + ", whereas " + u + " is a " + show(u_info)))
 				}
 			} else if u_info.IsDir() {
-				fmt.Println(ac.Blue(m) + " is new directory")
-				if err := os.Mkdir(m, os.ModePerm); err != nil {
-					fmt.Println(err)
-					os.Exit(7)
-				}
+				make_directory(m)
 			} else {
 				copy_file(m, u)
 			}
