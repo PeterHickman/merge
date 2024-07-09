@@ -28,3 +28,7 @@ def check_file(path, content)
     expect(c).to eq(content), "File #{path} should contain [#{content}] but has [#{c}]"
   end
 end
+
+def check_not_file(path)
+  expect(File.exist?(path)).to eq(false), "The file #{path} should not exist"
+end

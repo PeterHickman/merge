@@ -1,6 +1,5 @@
 package main
 
-// TODO: A dry run flag
 // TODO: Remove files from the updates directory
 
 import (
@@ -21,6 +20,7 @@ import (
 var master string
 var updates string
 var check string
+var dry_run bool
 
 func md5_of_file(filename string) string {
 	var file, _ = os.Open(filename)
@@ -92,6 +92,10 @@ func different_files(master, updates string, m_info, u_info os.FileInfo) bool {
 func copy_file(orig, update string) {
 	fmt.Println("Copy " + ac.Blue(update) + " ==> " + ac.Blue(orig))
 
+	if dry_run {
+		return
+	}
+
 	r, err := os.Open(update)
 	if err != nil {
 		fmt.Println(ac.Red(err.Error()))
@@ -109,6 +113,19 @@ func copy_file(orig, update string) {
 	w.ReadFrom(r)
 }
 
+func make_directory(path string) {
+	fmt.Println(ac.Blue(path) + " is new directory")
+
+	if dry_run {
+		return
+	}
+
+	if err := os.Mkdir(path, os.ModePerm); err != nil {
+		fmt.Println(err)
+		os.Exit(7)
+	}
+}
+
 func show(info os.FileInfo) string {
 	if info.IsDir() {
 		return "directory"
@@ -121,12 +138,15 @@ func init() {
 	var m = flag.String("master", "", "The directory we are keeping up to date")
 	var u = flag.String("updates", "", "The directory of updates")
 	var c = flag.String("check", "size", "How to compare files")
+	var d = flag.Bool("dry-run", false, "Do not copy files, just report what would happen")
 
 	flag.Parse()
 
 	if *m == "" || *u == "" {
 		usage()
 	}
+
+	dry_run = *d
 
 	check = strings.ToLower(*c)
 
@@ -156,6 +176,7 @@ func main() {
 	fmt.Println("Master ...: " + master)
 	fmt.Println("Updates ..: " + updates)
 	fmt.Println("Check ....: " + check)
+	fmt.Printf("Dry run ..: %t\n", dry_run)
 
 	err := filepath.Walk(updates,
 		func(path string, info os.FileInfo, err error) error {
@@ -191,7 +212,6 @@ func main() {
 					os.Exit(7)
 				}
 			} else {
-				fmt.Println(ac.Blue(m) + " is new file")
 				copy_file(m, u)
 			}
 
