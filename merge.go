@@ -117,7 +117,7 @@ func copy_file(orig, update string) {
 }
 
 func make_directory(path string) {
-	fmt.Println(ac.Blue(path) + " is new directory")
+	fmt.Println("New directory " + ac.Blue(path))
 
 	if dry_run {
 		return
