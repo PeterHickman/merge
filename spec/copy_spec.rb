@@ -223,7 +223,7 @@ describe 'Copy a file' do
 
   context 'filenames with spaces' do
     before do
-      make_dirs('tmp/m', 'tmp/u', 'tmp/u/x')
+      make_dirs('tmp/m', 'tmp/u')
     end
 
     context 'file with a space' do
@@ -245,6 +245,39 @@ describe 'Copy a file' do
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/a b c d e/1.txt', '1')
+      end
+    end
+  end
+
+  context 'filenames with odd characters' do
+    before do
+      make_dirs('tmp/m', 'tmp/u')
+    end
+
+    context 'file with a space' do
+      it 'should copy the file' do
+        make_file('tmp/u/🇯🇵Tokyo walk - Kanda Station to Akihabara.txt', '1')
+        make_file('tmp/u/小雨の品川シーサイドを散歩 2024 Rainy Shinagawa Seaside.txt', '2')
+
+
+        s = exec('merge --master tmp/m --updates tmp/u')
+        expect(s).to eq(0), "merge should run without error, got #{s}"
+
+        check_file('tmp/m/🇯🇵Tokyo walk - Kanda Station to Akihabara.txt', '1')
+        check_file('tmp/m/小雨の品川シーサイドを散歩 2024 Rainy Shinagawa Seaside.txt', '2')
+      end
+    end
+
+    context 'directory with a space' do
+      it 'should copy the file' do
+        make_file('tmp/u/🇯🇵Tokyo walk - Kanda Station to Akihabara/1.txt', '1')
+        make_file('tmp/u/小雨の品川シーサイドを散歩 2024 Rainy Shinagawa Seaside/2.txt', '2')
+
+        s = exec('merge --master tmp/m --updates tmp/u')
+        expect(s).to eq(0), "merge should run without error, got #{s}"
+
+        check_file('tmp/u/🇯🇵Tokyo walk - Kanda Station to Akihabara/1.txt', '1')
+        check_file('tmp/u/小雨の品川シーサイドを散歩 2024 Rainy Shinagawa Seaside/2.txt', '2')
       end
     end
   end
