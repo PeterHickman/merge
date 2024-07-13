@@ -220,4 +220,32 @@ describe 'Copy a file' do
       end
     end
   end
+
+  context 'filenames with spaces' do
+    before do
+      make_dirs('tmp/m', 'tmp/u', 'tmp/u/x')
+    end
+
+    context 'file with a space' do
+      it 'should copy the file' do
+        make_file('tmp/u/1 2 3.txt', '1')
+
+        s = exec('merge --master tmp/m --updates tmp/u')
+        expect(s).to eq(0), "merge should run without error, got #{s}"
+
+        check_file('tmp/m/1 2 3.txt', '1')
+      end
+    end
+
+    context 'directory with a space' do
+      it 'should copy the file' do
+        make_file('tmp/u/a b c d e/1.txt', '1')
+
+        s = exec('merge --master tmp/m --updates tmp/u')
+        expect(s).to eq(0), "merge should run without error, got #{s}"
+
+        check_file('tmp/m/a b c d e/1.txt', '1')
+      end
+    end
+  end
 end
