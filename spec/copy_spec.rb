@@ -254,7 +254,7 @@ describe 'Copy a file' do
       make_dirs('tmp/m', 'tmp/u')
     end
 
-    context 'file with a space' do
+    context 'file with odd characters' do
       it 'should copy the file' do
         make_file('tmp/u/🇯🇵Tokyo walk - Kanda Station to Akihabara.txt', '1')
         make_file('tmp/u/小雨の品川シーサイドを散歩 2024 Rainy Shinagawa Seaside.txt', '2')
@@ -268,7 +268,7 @@ describe 'Copy a file' do
       end
     end
 
-    context 'directory with a space' do
+    context 'directory with odd characters' do
       it 'should copy the file' do
         make_file('tmp/u/🇯🇵Tokyo walk - Kanda Station to Akihabara/1.txt', '1')
         make_file('tmp/u/小雨の品川シーサイドを散歩 2024 Rainy Shinagawa Seaside/2.txt', '2')
