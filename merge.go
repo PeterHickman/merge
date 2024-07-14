@@ -3,15 +3,11 @@ package main
 // TODO: Remove files from the updates directory
 
 import (
-	"crypto/md5"
-	"crypto/sha256"
-	"encoding/hex"
 	"flag"
 	"fmt"
 	ac "github.com/PeterHickman/ansi_colours"
 	ep "github.com/PeterHickman/expand_path"
 	"github.com/PeterHickman/toolbox"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -21,28 +17,6 @@ var master string
 var updates string
 var check string
 var dry_run bool
-
-func md5_of_file(filename string) string {
-	var file, _ = os.Open(filename)
-	defer file.Close()
-
-	var hash = md5.New()
-	io.Copy(hash, file)
-
-	var bytesHash = hash.Sum(nil)
-	return hex.EncodeToString(bytesHash[:])
-}
-
-func sha256_of_file(filename string) string {
-	file, _ := os.Open(filename)
-	defer file.Close()
-
-	hash := sha256.New()
-	io.Copy(hash, file)
-
-	var bytesHash = hash.Sum(nil)
-	return hex.EncodeToString(bytesHash[:])
-}
 
 func usage() {
 	fmt.Println("merge --master <master directory> --updates <updates directory> [--check ???] [--dry-run]")
@@ -83,9 +57,9 @@ func different_files(master, updates string, m_info, u_info os.FileInfo) bool {
 		if check == "size" {
 			return false
 		} else if check == "md5" {
-			return md5_of_file(master) != md5_of_file(updates)
+			return toolbox.CalculateMD5(master) != toolbox.CalculateMD5(updates)
 		} else if check == "sha256" {
-			return sha256_of_file(master) != sha256_of_file(updates)
+			return toolbox.CalculateSHA256(master) != toolbox.CalculateSHA256(updates)
 		}
 	}
 
