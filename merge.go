@@ -67,7 +67,9 @@ func different_files(master, updates string, m_info, u_info os.FileInfo) bool {
 }
 
 func copy_file(orig, update string) {
-	fmt.Println("Copy " + ac.Blue(update) + " ==> " + ac.Blue(orig))
+	fmt.Println("Copy " + ac.Blue(update))
+    fmt.Println("  to " + ac.Blue(orig))
+    fmt.Println()
 
 	if dry_run {
 		return
