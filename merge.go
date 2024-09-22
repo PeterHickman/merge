@@ -1,6 +1,7 @@
 package main
 
 // TODO: Remove files from the updates directory
+// TODO: Add a verify option after the copy has been made
 
 import (
 	"flag"
