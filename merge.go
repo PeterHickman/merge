@@ -1,7 +1,6 @@
 package main
 
 // TODO: Remove files from the updates directory
-// TODO: Add a verify option after the copy has been made
 
 import (
 	"flag"
@@ -19,6 +18,9 @@ var master string
 var updates string
 var check string
 var dry_run bool
+var verify bool
+var verify_errors int
+var copied int
 
 func usage() {
 	fmt.Println("merge --master <master directory> --updates <updates directory> [--check ???] [--dry-run]")
@@ -40,6 +42,8 @@ func usage() {
 	fmt.Println("")
 	fmt.Println("  --dry-run       -- Report the actions that would be taken but do not")
 	fmt.Println("                     do them")
+	fmt.Println("")
+	fmt.Println("  --verify        -- Verify each file is correctly copied with the SHA256")
 	fmt.Println("")
 	fmt.Println("Remember to keep a backup :)")
 
@@ -85,7 +89,6 @@ func copy_file(orig, update string) {
 	fmt.Println("Copy " + ac.Blue(update))
 	fmt.Println("  to " + ac.Blue(orig))
 	fmt.Println("Size " + ac.Blue(human_file_size(update)))
-	fmt.Println()
 
 	if dry_run {
 		return
@@ -96,16 +99,28 @@ func copy_file(orig, update string) {
 		fmt.Println(ac.Red(err.Error()))
 		os.Exit(8)
 	}
-	defer r.Close()
 
 	w, err := os.Create(orig)
 	if err != nil {
 		fmt.Println(ac.Red(err.Error()))
 		os.Exit(9)
 	}
-	defer w.Close()
 
 	w.ReadFrom(r)
+	r.Close()
+	w.Close()
+
+	if verify {
+		if toolbox.CalculateSHA256(orig) == toolbox.CalculateSHA256(update) {
+			fmt.Println("Verify " + ac.Green("passed"))
+			copied += 1
+		} else {
+			fmt.Println("Verify " + ac.Red("failed"))
+			verify_errors += 1
+		}
+	}
+
+	fmt.Println()
 }
 
 func make_directory(path string) {
@@ -134,6 +149,7 @@ func init() {
 	var u = flag.String("updates", "", "The directory of updates")
 	var c = flag.String("check", "size", "How to compare files")
 	var d = flag.Bool("dry-run", false, "Do not copy files, just report what would happen")
+	var v = flag.Bool("verify", false, "Verify the file after copying. SHA256 used")
 
 	flag.Parse()
 
@@ -142,6 +158,7 @@ func init() {
 	}
 
 	dry_run = *d
+	verify = *v
 
 	check = strings.ToLower(*c)
 
@@ -172,6 +189,11 @@ func main() {
 	fmt.Println("Updates ..: " + updates)
 	fmt.Println("Check ....: " + check)
 	fmt.Printf("Dry run ..: %t\n", dry_run)
+	if verify {
+		fmt.Println("Verify ...: on")
+	} else {
+		fmt.Println("Verify ...: off")
+	}
 	fmt.Println()
 
 	err := filepath.Walk(updates,
@@ -213,5 +235,14 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(6)
+	}
+
+	fmt.Printf("Copied %d files\n", copied)
+	if verify {
+		if verify_errors == 0 {
+			fmt.Println("All files copied successfully")
+		} else {
+			fmt.Println(ac.Red(fmt.Sprintf("Failed to verify %d files", verify_errors)))
+		}
 	}
 }
