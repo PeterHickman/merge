@@ -8,6 +8,7 @@ import (
 	ac "github.com/PeterHickman/ansi_colours"
 	ep "github.com/PeterHickman/expand_path"
 	"github.com/PeterHickman/toolbox"
+	humanize "github.com/dustin/go-humanize"
 	"os"
 	"path/filepath"
 	"strings"
@@ -66,10 +67,24 @@ func different_files(master, updates string, m_info, u_info os.FileInfo) bool {
 	return true
 }
 
+func human_file_size(filename string) string {
+	fi, err := os.Stat(filename)
+
+	if err != nil {
+		fmt.Println(ac.Red(err.Error()))
+		os.Exit(10)
+	}
+
+	size := uint64(fi.Size())
+
+	return humanize.Bytes(size)
+}
+
 func copy_file(orig, update string) {
 	fmt.Println("Copy " + ac.Blue(update))
-    fmt.Println("  to " + ac.Blue(orig))
-    fmt.Println()
+	fmt.Println("  to " + ac.Blue(orig))
+	fmt.Println("Size " + ac.Blue(human_file_size(update)))
+	fmt.Println()
 
 	if dry_run {
 		return
@@ -156,6 +171,7 @@ func main() {
 	fmt.Println("Updates ..: " + updates)
 	fmt.Println("Check ....: " + check)
 	fmt.Printf("Dry run ..: %t\n", dry_run)
+	fmt.Println()
 
 	err := filepath.Walk(updates,
 		func(path string, info os.FileInfo, err error) error {
