@@ -91,6 +91,7 @@ func copy_file(orig, update string) {
 	fmt.Println("Size " + ac.Blue(human_file_size(update)))
 
 	if dry_run {
+	    fmt.Println()
 		return
 	}
 
