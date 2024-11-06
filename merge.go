@@ -85,13 +85,14 @@ func human_file_size(filename string) string {
 	return humanize.Bytes(size)
 }
 
-func copy_file(orig, update string) {
+func copy_file(orig, update string, count int64) {
+	fmt.Println("Item " + humanize.Comma(count))
 	fmt.Println("Copy " + ac.Blue(update))
 	fmt.Println("  to " + ac.Blue(orig))
 	fmt.Println("Size " + ac.Blue(human_file_size(update)))
 
 	if dry_run {
-	    fmt.Println()
+		fmt.Println()
 		return
 	}
 
@@ -197,6 +198,8 @@ func main() {
 	}
 	fmt.Println()
 
+	var count int64
+
 	err := filepath.Walk(updates,
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
@@ -218,7 +221,8 @@ func main() {
 				if same_type(m_info, u_info) {
 					if !m_info.IsDir() {
 						if different_files(m, u, m_info, u_info) {
-							copy_file(m, u)
+							copy_file(m, u, count)
+							count++
 						}
 					}
 				} else {
@@ -227,7 +231,8 @@ func main() {
 			} else if u_info.IsDir() {
 				make_directory(m)
 			} else {
-				copy_file(m, u)
+				copy_file(m, u, count)
+				count++
 			}
 
 			return nil
