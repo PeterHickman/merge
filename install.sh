@@ -1,12 +1,13 @@
 #!/bin/sh
 
 BINARY='/usr/local/bin'
+APP=merge
 
-echo "Building merge"
-go build merge.go
+echo "Building $APP"
+go build -ldflags="-s -w" $APP.go
 
-echo "Installing merge to $BINARY"
-install -v merge $BINARY
+echo "Installing $APP to $BINARY"
+install $APP $BINARY
 
 echo "Removing the build"
-rm merge
+rm $APP
