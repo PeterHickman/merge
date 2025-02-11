@@ -22,6 +22,17 @@ var verify bool
 var verify_errors int
 var copied int
 
+type excludePatterns []string
+
+var exclude excludePatterns
+
+func (i *excludePatterns) String() string { return "" }
+
+func (i *excludePatterns) Set(value string) error {
+	*i = append(*i, strings.TrimSpace(value))
+	return nil
+}
+
 func usage() {
 	fmt.Println("merge --master <master directory> --updates <updates directory> [--check ???] [--dry-run]")
 	fmt.Println("")
@@ -44,6 +55,9 @@ func usage() {
 	fmt.Println("                     do them")
 	fmt.Println("")
 	fmt.Println("  --verify        -- Verify each file is correctly copied with the SHA256")
+	fmt.Println("")
+	fmt.Println("  --exclude       -- Ignore files that match the supplied pattern, --exclude")
+	fmt.Println("                     can be called multiple times")
 	fmt.Println("")
 	fmt.Println("Remember to keep a backup :)")
 
@@ -146,12 +160,33 @@ func show(info os.FileInfo) string {
 	}
 }
 
+func ignore_this_file(filename string) bool {
+	// This is not a smooth as I had hoped but I should
+	// probably not write my own at this point
+
+	for _, p := range exclude {
+		ignore, err := filepath.Match(p, filename[1:len(filename)])
+
+		if err != nil {
+			println(err)
+			os.Exit(1)
+		}
+
+		if ignore {
+			return true
+		}
+	}
+
+	return false
+}
+
 func init() {
 	var m = flag.String("master", "", "The directory we are keeping up to date")
 	var u = flag.String("updates", "", "The directory of updates")
 	var c = flag.String("check", "size", "How to compare files")
 	var d = flag.Bool("dry-run", false, "Do not copy files, just report what would happen")
 	var v = flag.Bool("verify", false, "Verify the file after copying. SHA256 used")
+	flag.Var(&exclude, "exclude", "file patterns to exclude")
 
 	flag.Parse()
 
@@ -208,6 +243,10 @@ func main() {
 
 			name := path[len(updates):]
 			if name == "" {
+				return nil
+			}
+
+			if ignore_this_file(name) {
 				return nil
 			}
 
