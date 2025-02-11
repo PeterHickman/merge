@@ -259,7 +259,6 @@ describe 'Copy a file' do
         make_file('tmp/u/🇯🇵Tokyo walk - Kanda Station to Akihabara.txt', '1')
         make_file('tmp/u/小雨の品川シーサイドを散歩 2024 Rainy Shinagawa Seaside.txt', '2')
 
-
         s = exec('merge --master tmp/m --updates tmp/u')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
@@ -279,6 +278,36 @@ describe 'Copy a file' do
         check_file('tmp/u/🇯🇵Tokyo walk - Kanda Station to Akihabara/1.txt', '1')
         check_file('tmp/u/小雨の品川シーサイドを散歩 2024 Rainy Shinagawa Seaside/2.txt', '2')
       end
+    end
+  end
+
+  context 'exclude files matching a pattern' do
+    before do
+      make_dirs('tmp/m', 'tmp/u')
+    end
+
+    it 'should not copy *.bak files' do
+      make_file('tmp/u/file.bak', '1')
+      make_file('tmp/u/new.txt', '2')
+
+      s = exec("./merge --master tmp/m --updates tmp/u --exclude '*.bak'")
+      expect(s).to eq(0), "merge should run without error, got #{s}"
+
+      check_not_file('tmp/m/file.bak')
+      check_file('tmp/m/new.txt', '2')
+    end
+
+    it 'should handle multiple excludes' do
+      make_file('tmp/u/file.bak', '1')
+      make_file('tmp/u/new.txt', '2')
+      make_file('tmp/u/fred.old', '3')
+
+      s = exec('merge --master tmp/m --updates tmp/u --exclude "*.bak" --exclude "*.old"')
+      expect(s).to eq(0), "merge should run without error, got #{s}"
+
+      check_not_file('tmp/m/file.bak')
+      check_file('tmp/m/new.txt', '2')
+      check_not_file('tmp/m/fred.old')
     end
   end
 end
