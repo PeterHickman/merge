@@ -1,11 +1,19 @@
 require 'spec_helper'
 
 describe 'Copy a file' do
-  before do
+  before :all do
+    system('go build merge.go')
+  end
+
+  after :all do
+    system('rm merge')
+  end
+
+  before :each do
     FileUtils.rm_rf('tmp') if File.exists?('tmp')
   end
 
-  after do
+  after :each do
     FileUtils.rm_rf('tmp') if File.exists?('tmp')
   end
 
@@ -17,7 +25,7 @@ describe 'Copy a file' do
 
     context '--check size' do
       it 'copies the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check size')
+        s = exec('./merge --master tmp/m --updates tmp/u --check size')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '1')
@@ -27,7 +35,7 @@ describe 'Copy a file' do
 
     context '--check md5' do
       it 'copies the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check md5')
+        s = exec('./merge --master tmp/m --updates tmp/u --check md5')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '1')
@@ -37,7 +45,7 @@ describe 'Copy a file' do
 
     context '--check sha256' do
       it 'copies the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check sha256')
+        s = exec('./merge --master tmp/m --updates tmp/u --check sha256')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '1')
@@ -47,7 +55,7 @@ describe 'Copy a file' do
 
     context '--check same' do
       it 'copies the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check same')
+        s = exec('./merge --master tmp/m --updates tmp/u --check same')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '1')
@@ -65,7 +73,7 @@ describe 'Copy a file' do
 
     context '--check size' do
       it 'does not copy the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check size')
+        s = exec('./merge --master tmp/m --updates tmp/u --check size')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '1')
@@ -75,7 +83,7 @@ describe 'Copy a file' do
 
     context '--check md5' do
       it 'copies the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check md5')
+        s = exec('./merge --master tmp/m --updates tmp/u --check md5')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '2')
@@ -85,7 +93,7 @@ describe 'Copy a file' do
 
     context '--check sha256' do
       it 'copies the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check sha256')
+        s = exec('./merge --master tmp/m --updates tmp/u --check sha256')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '2')
@@ -95,7 +103,7 @@ describe 'Copy a file' do
 
     context '--check same' do
       it 'does not copy the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check same')
+        s = exec('./merge --master tmp/m --updates tmp/u --check same')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '1')
@@ -113,7 +121,7 @@ describe 'Copy a file' do
 
     context '--check size' do
       it 'copies the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check size')
+        s = exec('./merge --master tmp/m --updates tmp/u --check size')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '1')
@@ -124,7 +132,7 @@ describe 'Copy a file' do
 
     context '--check md5' do
       it 'copies the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check md5')
+        s = exec('./merge --master tmp/m --updates tmp/u --check md5')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '1')
@@ -135,7 +143,7 @@ describe 'Copy a file' do
 
     context '--check sha256' do
       it 'copies the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check sha256')
+        s = exec('./merge --master tmp/m --updates tmp/u --check sha256')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '1')
@@ -146,7 +154,7 @@ describe 'Copy a file' do
 
     context '--check same' do
       it 'copies the file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check same')
+        s = exec('./merge --master tmp/m --updates tmp/u --check same')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '1')
@@ -163,7 +171,7 @@ describe 'Copy a file' do
     end
 
     it 'copies the file' do
-      s = exec('merge --master tmp/m --updates tmp/u --check size')
+      s = exec('./merge --master tmp/m --updates tmp/u --check size')
       expect(s).to eq(0), "merge should run without error, got #{s}"
 
       check_file('tmp/m/a/b/c/d/e/1.txt', '1')
@@ -176,7 +184,7 @@ describe 'Copy a file' do
     end
 
     it 'creates the directory' do
-      s = exec('merge --master tmp/m --updates tmp/u --check size')
+      s = exec('./merge --master tmp/m --updates tmp/u --check size')
       expect(s).to eq(0), "merge should run without error, got #{s}"
 
       check_dir('tmp/m/x')
@@ -191,7 +199,7 @@ describe 'Copy a file' do
       end
 
       it 'does not copy a new file' do
-        s = exec('merge --master tmp/m --updates tmp/u --check size --dry-run')
+        s = exec('./merge --master tmp/m --updates tmp/u --check size --dry-run')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_not_file('tmp/m/1.txt')
@@ -200,7 +208,7 @@ describe 'Copy a file' do
       it 'does not update an existing file' do
         make_file('tmp/m/1.txt', '2')
 
-        s = exec('merge --master tmp/m --updates tmp/u --check size --dry-run')
+        s = exec('./merge --master tmp/m --updates tmp/u --check size --dry-run')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1.txt', '2')
@@ -213,7 +221,7 @@ describe 'Copy a file' do
       end
 
       it 'does not create the directory' do
-        s = exec('merge --master tmp/m --updates tmp/u --dry-run')
+        s = exec('./merge --master tmp/m --updates tmp/u --dry-run')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_not_dir('tmp/m/x')
@@ -230,7 +238,7 @@ describe 'Copy a file' do
       it 'should copy the file' do
         make_file('tmp/u/1 2 3.txt', '1')
 
-        s = exec('merge --master tmp/m --updates tmp/u')
+        s = exec('./merge --master tmp/m --updates tmp/u')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/1 2 3.txt', '1')
@@ -241,7 +249,7 @@ describe 'Copy a file' do
       it 'should copy the file' do
         make_file('tmp/u/a b c d e/1.txt', '1')
 
-        s = exec('merge --master tmp/m --updates tmp/u')
+        s = exec('./merge --master tmp/m --updates tmp/u')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/a b c d e/1.txt', '1')
@@ -259,7 +267,7 @@ describe 'Copy a file' do
         make_file('tmp/u/🇯🇵Tokyo walk - Kanda Station to Akihabara.txt', '1')
         make_file('tmp/u/小雨の品川シーサイドを散歩 2024 Rainy Shinagawa Seaside.txt', '2')
 
-        s = exec('merge --master tmp/m --updates tmp/u')
+        s = exec('./merge --master tmp/m --updates tmp/u')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/m/🇯🇵Tokyo walk - Kanda Station to Akihabara.txt', '1')
@@ -272,7 +280,7 @@ describe 'Copy a file' do
         make_file('tmp/u/🇯🇵Tokyo walk - Kanda Station to Akihabara/1.txt', '1')
         make_file('tmp/u/小雨の品川シーサイドを散歩 2024 Rainy Shinagawa Seaside/2.txt', '2')
 
-        s = exec('merge --master tmp/m --updates tmp/u')
+        s = exec('./merge --master tmp/m --updates tmp/u')
         expect(s).to eq(0), "merge should run without error, got #{s}"
 
         check_file('tmp/u/🇯🇵Tokyo walk - Kanda Station to Akihabara/1.txt', '1')
@@ -302,12 +310,25 @@ describe 'Copy a file' do
       make_file('tmp/u/new.txt', '2')
       make_file('tmp/u/fred.old', '3')
 
-      s = exec('merge --master tmp/m --updates tmp/u --exclude "*.bak" --exclude "*.old"')
+      s = exec('./merge --master tmp/m --updates tmp/u --exclude "*.bak" --exclude "*.old"')
       expect(s).to eq(0), "merge should run without error, got #{s}"
 
       check_not_file('tmp/m/file.bak')
       check_file('tmp/m/new.txt', '2')
       check_not_file('tmp/m/fred.old')
+    end
+
+    it 'should exclude however the pattern matches' do
+      make_file('tmp/u/file-partial', '1')
+      make_file('tmp/u/file-partial-2', '2')
+      make_file('tmp/u/fred.txt', '3')
+
+      s = exec('./merge --master tmp/m --updates tmp/u --exclude "*-partial*" ')
+      expect(s).to eq(0), "merge should run without error, got #{s}"
+
+      check_not_file('tmp/m/file-partial')
+      check_not_file('tmp/m/file-partial-2')
+      check_file('tmp/m/fred.txt', '3')
     end
   end
 end
