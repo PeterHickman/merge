@@ -330,5 +330,16 @@ describe 'Copy a file' do
       check_not_file('tmp/m/file-partial-2')
       check_file('tmp/m/fred.txt', '3')
     end
+
+    it 'should copy these names' do
+      make_file('tmp/u/sha256-6e4c38e1172f42fdbff13edf9a7a017679fb82b0fde415a3e8b3c31c6ed4a4e4e-partial-1', '1')
+      make_file('tmp/u/sha256-6e4c38e1172f42fdbff13edf9a7a017679fb82b0fde415a3e8b3c31c6ed4a4e4e-partial-2', '2')
+
+      s = exec('./merge --master tmp/m --updates tmp/u --exclude "*-partial*" ')
+      expect(s).to eq(0), "merge should run without error, got #{s}"
+
+      check_not_file('tmp/m/sha256-6e4c38e1172f42fdbff13edf9a7a017679fb82b0fde415a3e8b3c31c6ed4a4e4e-partial-1')
+      check_not_file('tmp/m/sha256-6e4c38e1172f42fdbff13edf9a7a017679fb82b0fde415a3e8b3c31c6ed4a4e4e-partial-2')
+    end
   end
 end
