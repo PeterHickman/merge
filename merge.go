@@ -165,7 +165,7 @@ func ignore_this_file(filename string) bool {
 	// probably not write my own at this point
 
 	for _, p := range exclude {
-		ignore, err := filepath.Match(p, filename[1:len(filename)])
+		ignore, err := filepath.Match(p, filename[1:])
 
 		if err != nil {
 			println(err)
