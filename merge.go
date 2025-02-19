@@ -7,6 +7,7 @@ import (
 	"fmt"
 	ac "github.com/PeterHickman/ansi_colours"
 	ep "github.com/PeterHickman/expand_path"
+	"github.com/PeterHickman/matcher"
 	"github.com/PeterHickman/toolbox"
 	humanize "github.com/dustin/go-humanize"
 	"os"
@@ -25,6 +26,7 @@ var copied int
 type excludePatterns []string
 
 var exclude excludePatterns
+var parsed_patterns [][]string
 
 func (i *excludePatterns) String() string { return "" }
 
@@ -164,13 +166,8 @@ func ignore_this_file(filename string) bool {
 	// This is not a smooth as I had hoped but I should
 	// probably not write my own at this point
 
-	for _, p := range exclude {
-		ignore, err := filepath.Match(p, filename[1:])
-
-		if err != nil {
-			println(err)
-			os.Exit(1)
-		}
+	for _, p := range parsed_patterns {
+		ignore := matcher.MatchPattern(p, filename[1:])
 
 		if ignore {
 			return true
@@ -178,6 +175,12 @@ func ignore_this_file(filename string) bool {
 	}
 
 	return false
+}
+
+func process_patterns() {
+	for _, v := range exclude {
+		parsed_patterns = append(parsed_patterns, matcher.ParsePattern(v))
+	}
 }
 
 func init() {
@@ -222,6 +225,8 @@ func init() {
 }
 
 func main() {
+	process_patterns()
+
 	fmt.Println("Master ...: " + master)
 	fmt.Println("Updates ..: " + updates)
 	fmt.Println("Check ....: " + check)
@@ -260,8 +265,8 @@ func main() {
 				if same_type(m_info, u_info) {
 					if !m_info.IsDir() {
 						if different_files(m, u, m_info, u_info) {
-							copy_file(m, u, count)
 							count++
+							copy_file(m, u, count)
 						}
 					}
 				} else {
@@ -270,8 +275,8 @@ func main() {
 			} else if u_info.IsDir() {
 				make_directory(m)
 			} else {
-				copy_file(m, u, count)
 				count++
+				copy_file(m, u, count)
 			}
 
 			return nil

@@ -2,6 +2,8 @@ github.com/PeterHickman/ansi_colours v1.0.3 h1:aIht+mAwQq69XiJFnXaAhELdotNu0iPmP
 github.com/PeterHickman/ansi_colours v1.0.3/go.mod h1:IWsludjGb9SEkbYYuAUKBDbHdYCCNXh6OteHOgi0m3o=
 github.com/PeterHickman/expand_path v1.0.2 h1:E5NuRukO1VRSUBJJFiFqKHcPJFgzCJb8FGasXzRcavE=
 github.com/PeterHickman/expand_path v1.0.2/go.mod h1:pue22LojYg5BNpXkDIJwExMeAdq0RgNae/iQxxDu7/s=
+github.com/PeterHickman/matcher v0.0.1 h1:sIhNfJyXw8jadlZ8CgsjjZsyLZsDJ3CjtKaem8fAXhM=
+github.com/PeterHickman/matcher v0.0.1/go.mod h1:DYBpCvb+DfpD2VC0VthYAfhYqm+2Yp10kMtXNZDNUsw=
 github.com/PeterHickman/toolbox v1.0.2 h1:3md3YGOQ6NjGwFNke3h5xDWhidb26SwvEtoNcKjEwNY=
 github.com/PeterHickman/toolbox v1.0.2/go.mod h1:R1OOjNp8kIWacudQi1SDZrCYnfjU5y/2yq3HCuTIHBg=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
