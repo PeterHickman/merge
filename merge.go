@@ -136,6 +136,8 @@ func copy_file(orig, update string, count int64) {
 			fmt.Println("Verify " + ac.Red("failed"))
 			verify_errors += 1
 		}
+	} else {
+		copied += 1
 	}
 
 	fmt.Println()
